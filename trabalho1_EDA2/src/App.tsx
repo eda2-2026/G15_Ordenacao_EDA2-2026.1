@@ -5,6 +5,7 @@ import { PRESET_SYSTEM_TAGS } from './tagData'
 import { BATTLE_ALGORITHMS } from './utils/algorithms'
 import { runBattleRound } from './utils/benchmark'
 import type { BattleRound, ScoreEntry } from './types/search'
+import SortingVisualizer from './components/SortingVisualizer'
 
 
 function buildInitialScoreboard(): ScoreEntry[] {
@@ -137,12 +138,12 @@ function App() {
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <section className="battle-card rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-wide text-sky-600">Modo Batalha</p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-900">Gamificação de busca por tags</h1>
-        <p className="mt-3 text-slate-600">
-          A cada busca, os algoritmos competem em performance. Escolha seu palpite antes da
-          rodada: se acertar o vencedor, você ganha 1 ponto. Empate não pontua.
-        </p>
+            <p className="text-sm font-semibold uppercase tracking-wide text-sky-600">Modo Batalha</p>
+            <h1 className="mt-2 text-3xl font-bold text-slate-900">Gamificação de busca por tags</h1>
+            <p className="mt-3 text-slate-600">
+              A cada busca, os algoritmos competem em performance. Escolha seu palpite antes da
+              rodada: se acertar o vencedor, você ganha 1 ponto. Empate não pontua.
+            </p>
 
         <form className="mt-6 grid gap-3 md:grid-cols-[minmax(0,1fr)_260px_auto]" onSubmit={handleSearchSubmit}>
           <div className="flex gap-2">
@@ -269,6 +270,8 @@ function App() {
           </div>
         )}
       </section>
+
+      <SortingVisualizer />
 
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-wide text-sky-600">Cadastro local</p>
