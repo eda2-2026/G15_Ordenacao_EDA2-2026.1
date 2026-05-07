@@ -1,11 +1,60 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-const ALGORITHMS = [
-  { id: 'bubble', name: 'Bubble Sort' },
-  { id: 'insertion', name: 'Insertion Sort' },
-  { id: 'merge', name: 'Merge Sort' },
-  { id: 'quick', name: 'Quick Sort' },
-  { id: 'heap', name: 'Heap Sort' },
+type SortingAlgorithmInfo = {
+  id: string;
+  name: string;
+  description: string;
+  complexity: { best: string; average: string; worst: string };
+  space: string;
+  stable: boolean;
+};
+
+const ALGORITHMS: SortingAlgorithmInfo[] = [
+  {
+    id: 'bubble',
+    name: 'Bubble Sort',
+    description:
+      'Percorre repetidamente o vetor comparando pares adjacentes e trocando-os quando estão fora de ordem. A cada passada, o maior elemento "borbulha" até o final do vetor, reduzindo em uma posição a região ainda não ordenada. É simples de implementar, mas ineficiente em vetores grandes porque, no pior caso, executa cerca de n² comparações.',
+    complexity: { best: 'O(n)', average: 'O(n²)', worst: 'O(n²)' },
+    space: 'O(1)',
+    stable: true,
+  },
+  {
+    id: 'insertion',
+    name: 'Insertion Sort',
+    description:
+      'Constrói o vetor ordenado um elemento por vez. Para cada novo elemento, desloca para a direita os elementos maiores já ordenados até encontrar a posição correta de inserção. Tem desempenho excelente em vetores pequenos ou quase ordenados (caso melhor O(n)), mas degrada para O(n²) quando o vetor está em ordem inversa.',
+    complexity: { best: 'O(n)', average: 'O(n²)', worst: 'O(n²)' },
+    space: 'O(1)',
+    stable: true,
+  },
+  {
+    id: 'merge',
+    name: 'Merge Sort',
+    description:
+      'Aplica a estratégia dividir-para-conquistar: divide o vetor recursivamente ao meio até obter sub-vetores de tamanho 1, e depois intercala (merge) pares ordenados, reconstruindo o vetor completo. Garante O(n log n) em todos os cenários e é estável, mas exige O(n) de memória auxiliar para armazenar os sub-vetores durante a intercalação.',
+    complexity: { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n log n)' },
+    space: 'O(n)',
+    stable: true,
+  },
+  {
+    id: 'quick',
+    name: 'Quick Sort',
+    description:
+      'Escolhe um pivô (aqui o último elemento da partição) e reorganiza o vetor de modo que valores menores fiquem à esquerda e maiores à direita. Em seguida, aplica recursivamente o mesmo processo a cada lado. Em média é O(n log n) e in-place, mas degrada para O(n²) quando o pivô é mal escolhido — por exemplo, em um vetor já ordenado com pivô na ponta.',
+    complexity: { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n²)' },
+    space: 'O(log n)',
+    stable: false,
+  },
+  {
+    id: 'heap',
+    name: 'Heap Sort',
+    description:
+      'Reorganiza o vetor como um heap máximo — uma árvore binária implícita onde cada pai é maior que os filhos. Depois, retira repetidamente a raiz (o maior elemento), troca com o último da região não ordenada e reaplica a propriedade de heap no restante. Garante O(n log n) no pior caso e é in-place, mas não é estável.',
+    complexity: { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n log n)' },
+    space: 'O(1)',
+    stable: false,
+  },
 ];
 
 const MOCK_DATA_SIZE = 100;
@@ -139,6 +188,80 @@ export default function SortingVisualizer() {
     setElapsedTime((endTime - startTime).toFixed(3));
   };
 
+  const runMergeSort = async () => {
+    const arr = [...array];
+    let swaps = 0;
+    let comparisons = 0;
+    const startTime = performance.now();
+
+    const merge = async (left: number, mid: number, right: number) => {
+      const leftPart = arr.slice(left, mid + 1);
+      const rightPart = arr.slice(mid + 1, right + 1);
+
+      let i = 0;
+      let j = 0;
+      let k = left;
+
+      while (i < leftPart.length && j < rightPart.length) {
+        comparisons++;
+        setComparisonCount(comparisons);
+
+        if (leftPart[i] <= rightPart[j]) {
+          arr[k] = leftPart[i];
+          i++;
+        } else {
+          arr[k] = rightPart[j];
+          j++;
+        }
+
+        swaps++;
+        setSwapCount(swaps);
+        setArray([...arr]);
+        playBeep(arr[k], 100);
+        await sleep(20);
+        k++;
+      }
+
+      while (i < leftPart.length) {
+        arr[k] = leftPart[i];
+        swaps++;
+        setSwapCount(swaps);
+        setArray([...arr]);
+        playBeep(arr[k], 100);
+        await sleep(20);
+        i++;
+        k++;
+      }
+
+      while (j < rightPart.length) {
+        arr[k] = rightPart[j];
+        swaps++;
+        setSwapCount(swaps);
+        setArray([...arr]);
+        playBeep(arr[k], 100);
+        await sleep(20);
+        j++;
+        k++;
+      }
+    };
+
+    const mergeSort = async (left: number, right: number): Promise<void> => {
+      if (left >= right) {
+        return;
+      }
+
+      const mid = Math.floor((left + right) / 2);
+      await mergeSort(left, mid);
+      await mergeSort(mid + 1, right);
+      await merge(left, mid, right);
+    };
+
+    await mergeSort(0, arr.length - 1);
+
+    const endTime = performance.now();
+    setElapsedTime((endTime - startTime).toFixed(3));
+  };
+
   const runQuickSort = async () => {
     const arr = [...array];
     let swaps = 0;
@@ -208,6 +331,8 @@ export default function SortingVisualizer() {
       await runInsertionSort();
     } else if (selectedAlgorithm === 'quick') {
       await runQuickSort();
+    } else if (selectedAlgorithm === 'merge') {
+      await runMergeSort();
     } else {
       // Mock provisório para outros algoritmos enquanto não são implementados
       let swaps = 0;
@@ -290,6 +415,35 @@ export default function SortingVisualizer() {
           {isSorting ? 'Ordenando...' : 'Iniciar Ordenação'}
         </button>
       </div>
+
+      {/* Explicação do algoritmo selecionado */}
+      {(() => {
+        const info = ALGORITHMS.find((alg) => alg.id === selectedAlgorithm);
+        if (!info) return null;
+        return (
+          <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold text-slate-900">Como funciona: {info.name}</h2>
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  info.stable
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-amber-100 text-amber-700'
+                }`}
+              >
+                {info.stable ? 'Estável' : 'Não estável'}
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-6 text-slate-700">{info.description}</p>
+            <p className="mt-3 text-xs text-slate-500">
+              Complexidade — melhor: <strong className="text-slate-700">{info.complexity.best}</strong> ·
+              média: <strong className="text-slate-700">{info.complexity.average}</strong> ·
+              pior: <strong className="text-slate-700">{info.complexity.worst}</strong> ·
+              memória auxiliar: <strong className="text-slate-700">{info.space}</strong>
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Visualizador */}
       <div className="bg-slate-900 rounded-xl p-4 h-64 flex items-end justify-center gap-[2px] overflow-hidden">
