@@ -101,6 +101,99 @@ export default function SortingVisualizer() {
     setElapsedTime((endTime - startTime).toFixed(3));
   };
 
+  const runInsertionSort = async () => {
+    const arr = [...array];
+    let swaps = 0;
+    let comparisons = 0;
+    const startTime = performance.now();
+
+    for (let i = 1; i < arr.length; i++) {
+      const currentValue = arr[i];
+      let j = i - 1;
+
+      while (j >= 0) {
+        comparisons++;
+        setComparisonCount(comparisons);
+
+        if (arr[j] <= currentValue) {
+          break;
+        }
+
+        arr[j + 1] = arr[j];
+        swaps++;
+        setSwapCount(swaps);
+        setArray([...arr]);
+        playBeep(arr[j], 100);
+
+        j--;
+        await sleep(20);
+      }
+
+      arr[j + 1] = currentValue;
+      setArray([...arr]);
+      playBeep(currentValue, 100);
+      await sleep(20);
+    }
+
+    const endTime = performance.now();
+    setElapsedTime((endTime - startTime).toFixed(3));
+  };
+
+  const runQuickSort = async () => {
+    const arr = [...array];
+    let swaps = 0;
+    let comparisons = 0;
+    const startTime = performance.now();
+
+    const swapValues = async (firstIndex: number, secondIndex: number) => {
+      if (firstIndex === secondIndex) {
+        return;
+      }
+
+      const temp = arr[firstIndex];
+      arr[firstIndex] = arr[secondIndex];
+      arr[secondIndex] = temp;
+      swaps++;
+      setSwapCount(swaps);
+      setArray([...arr]);
+      playBeep(arr[firstIndex], 100);
+      await sleep(20);
+    };
+
+    const partition = async (low: number, high: number) => {
+      const pivot = arr[high];
+      let pivotIndex = low - 1;
+
+      for (let j = low; j < high; j++) {
+        comparisons++;
+        setComparisonCount(comparisons);
+
+        if (arr[j] < pivot) {
+          pivotIndex++;
+          await swapValues(pivotIndex, j);
+        }
+      }
+
+      await swapValues(pivotIndex + 1, high);
+      return pivotIndex + 1;
+    };
+
+    const quickSort = async (low: number, high: number): Promise<void> => {
+      if (low >= high) {
+        return;
+      }
+
+      const partitionIndex = await partition(low, high);
+      await quickSort(low, partitionIndex - 1);
+      await quickSort(partitionIndex + 1, high);
+    };
+
+    await quickSort(0, arr.length - 1);
+
+    const endTime = performance.now();
+    setElapsedTime((endTime - startTime).toFixed(3));
+  };
+
   const handleSort = async () => {
     initAudio();
     if (isSorting) return;
@@ -111,6 +204,10 @@ export default function SortingVisualizer() {
 
     if (selectedAlgorithm === 'bubble') {
       await runBubbleSort();
+    } else if (selectedAlgorithm === 'insertion') {
+      await runInsertionSort();
+    } else if (selectedAlgorithm === 'quick') {
+      await runQuickSort();
     } else {
       // Mock provisório para outros algoritmos enquanto não são implementados
       let swaps = 0;
