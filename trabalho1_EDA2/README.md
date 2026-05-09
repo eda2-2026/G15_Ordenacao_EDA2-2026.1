@@ -1,4 +1,4 @@
-# Trabalho 1 - EDA2
+# Trabalho 2 - EDA2
 
 ## Visao geral
 Aplicacao React + TypeScript para **gamificacao do aprendizado de algoritmos de busca**.
@@ -13,7 +13,18 @@ Os algoritmos usados nas batalhas estao em `src/utils/algorithms.ts`:
 3. **Busca Hash Dinamico**
 4. **Busca Hash Estatico**
 
-Resumo de complexidade:
+## Algoritmos de ordenação visualizados
+A aplicação também contém um visualizador de algoritmos de ordenação em `src/components/SortingVisualizer.tsx`:
+
+1. **Bubble Sort**
+2. **Insertion Sort**
+3. **Merge Sort**
+4. **Quick Sort**
+5. **Heap Sort**
+
+Cada algoritmo mostra o processo de ordenação com animações, contagem de comparações e trocas, e tempo de execução.
+
+Resumo de complexidade dos algoritmos de busca:
 
 | Algoritmo | Melhor | Medio | Pior | Observacao |
 |---|---:|---:|---:|---|
@@ -21,6 +32,16 @@ Resumo de complexidade:
 | Busca Binaria | O(1) | O(log n) | O(log n) | Exige lista ordenada |
 | Hash Dinamico | O(1) | O(1) | O(n) | Redimensiona ao passar fator de carga |
 | Hash Estatico | O(1) | O(1) | O(n) | Capacidade fixa, com fallback sequencial |
+
+Resumo de complexidade dos algoritmos de ordenação:
+
+| Algoritmo | Melhor | Medio | Pior | Espaco | Estavel |
+|---|---:|---:|---:|---:|---:|
+| Bubble Sort | O(n) | O(n²) | O(n²) | O(1) | Sim |
+| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) | Sim |
+| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) | Sim |
+| Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) | Não |
+| Heap Sort | O(n log n) | O(n log n) | O(n log n) | O(1) | Não |
 
 ## Como funciona a batalha
 A cada rodada:

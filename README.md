@@ -2,7 +2,7 @@
 
 Numero da Lista: 1<br>
 Conteudo da Disciplina: Algoritmos de Busca<br>
-URL de apresentação do trabalho: https://youtu.be/gBfmzI-2u-w<br>
+URL de apresentação do trabalho: https://youtu.be/AfJ6eRwazv4<br>
 
 ## Alunos
 |Matricula | Aluno |
@@ -21,11 +21,21 @@ Algoritmos abordados:
 - Busca Hash Dinamico
 - Busca Hash Estatico
 
+Algoritmos de ordenação presentes no mesmo repositório:
+- Bubble Sort
+- Insertion Sort
+- Merge Sort
+- Quick Sort
+- Heap Sort
+
+O visualizador de ordenação está implementado em `trabalho1_EDA2/src/components/SortingVisualizer.tsx`, com animação das operações, contagem de comparações e trocas e medição de tempo.
+
 ## Screenshots
 
 ![Tela inicial](docs/screenshots/tela-inicial.PNG)
 ![Rodada de batalha](docs/screenshots/rodada-batalha.PNG)
 ![Placar e ranking](docs/screenshots/placar-ranking.PNG)
+![Modo ordenação](docs/screenshots/modo-ordenacao.PNG)
 
 ## Instalacao
 Linguagem: TypeScript e JavaScript<br>
