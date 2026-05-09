@@ -317,6 +317,67 @@ export default function SortingVisualizer() {
     setElapsedTime((endTime - startTime).toFixed(3));
   };
 
+  const runHeapSort = async () => {
+    const arr = [...array];
+    let swaps = 0;
+    let comparisons = 0;
+    const startTime = performance.now();
+
+    const swapValues = async (firstIndex: number, secondIndex: number) => {
+      if (firstIndex === secondIndex) {
+        return;
+      }
+
+      const temp = arr[firstIndex];
+      arr[firstIndex] = arr[secondIndex];
+      arr[secondIndex] = temp;
+      swaps++;
+      setSwapCount(swaps);
+      setArray([...arr]);
+      playBeep(arr[firstIndex], 100);
+      await sleep(20);
+    };
+
+    const heapify = async (heapSize: number, rootIndex: number): Promise<void> => {
+      let largest = rootIndex;
+      const left = 2 * rootIndex + 1;
+      const right = 2 * rootIndex + 2;
+
+      if (left < heapSize) {
+        comparisons++;
+        setComparisonCount(comparisons);
+        if (arr[left] > arr[largest]) {
+          largest = left;
+        }
+      }
+
+      if (right < heapSize) {
+        comparisons++;
+        setComparisonCount(comparisons);
+        if (arr[right] > arr[largest]) {
+          largest = right;
+        }
+      }
+
+      if (largest !== rootIndex) {
+        await swapValues(rootIndex, largest);
+        await heapify(heapSize, largest);
+      }
+    };
+
+    for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+      await heapify(arr.length, i);
+    }
+
+    for (let i = arr.length - 1; i > 0; i--) {
+      await swapValues(0, i);
+      await heapify(i, 0);
+    }
+
+    const endTime = performance.now();
+    setElapsedTime((endTime - startTime).toFixed(3));
+  };
+
   const handleSort = async () => {
     initAudio();
     if (isSorting) return;
@@ -333,6 +394,8 @@ export default function SortingVisualizer() {
       await runQuickSort();
     } else if (selectedAlgorithm === 'merge') {
       await runMergeSort();
+    } else if (selectedAlgorithm === 'heap') {
+      await runHeapSort();
     } else {
       // Mock provisório para outros algoritmos enquanto não são implementados
       let swaps = 0;
